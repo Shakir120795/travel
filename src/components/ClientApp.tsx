@@ -11,13 +11,13 @@ function VideoBg({src, poster, className, eager}:{src:string; poster?:string; cl
   return (<video ref={ref} key={src} className={className} autoPlay muted loop playsInline preload={eager?"auto":"metadata"} poster={poster} aria-hidden><source src={src} type="video/mp4"/></video>);
 }
 export default function ClientApp(){
-  const [pkg,setPkg]=useState(packages[0].id); const [stop,setStop]=useState(0); const [trip,setTrip]=useState<string[]>([]); const [loaded,setLoaded]=useState(false); const [reduced,setReduced]=useState(false);
+  const [pkg,setPkg]=useState(packages[0].id); const [stop,setStop]=useState(0); const [trip,setTrip]=useState<string[]>([]); const [reduced,setReduced]=useState(false);
   const formRef=useRef<HTMLFormElement>(null);
-  useEffect(()=>{ if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(()=>{}); setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches); const t=setTimeout(()=>setLoaded(true),900);
+  useEffect(()=>{ if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(()=>{}); setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     gsap.registerPlugin(ScrollTrigger); const lenis=new Lenis({lerp:0.09}); lenis.on("scroll",ScrollTrigger.update);
     const raf=(time:number)=>{lenis.raf(time*1000)}; gsap.ticker.add(raf); gsap.ticker.lagSmoothing(0);
     gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(el=>{ gsap.fromTo(el,{y:36,opacity:0},{y:0,opacity:1,duration:0.9,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 86%"}}); });
-    return ()=>{clearTimeout(t); gsap.ticker.remove(raf); lenis.destroy();}; },[]);
+    return ()=>{gsap.ticker.remove(raf); lenis.destroy();}; },[]);
   const bookPkg=(id:string)=>{ setPkg(id); document.getElementById("book")?.scrollIntoView({behavior:"smooth"}); };
   const addStop=(n:string)=>{ setTrip(p=>p.includes(n)?p:[...p,n]); document.getElementById("book")?.scrollIntoView({behavior:"smooth"}); };
   const submit=async(e:React.FormEvent<HTMLFormElement>)=>{ e.preventDefault(); const fd=new FormData(e.currentTarget); const data=Object.fromEntries(fd.entries()); const sel=packages.find(p=>p.id===pkg);
@@ -27,7 +27,6 @@ export default function ClientApp(){
   const input="w-full rounded-xl bg-slate-50 border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-500";
   const active=stops[stop];
   return (<main>
-    {!loaded && <div className="fixed inset-0 z-[100] grid place-items-center bg-[#FAF6EE]"><div className="text-center"><p className="font-display text-2xl font-bold">Golden Hour Drive</p><div className="mt-4 h-1.5 w-56 overflow-hidden rounded-full bg-slate-900/10"><div className="h-full w-2/3 animate-pulse rounded-full bg-cyan-300"/></div><p className="mt-3 text-sm text-slate-600">Loading your golden-hour ride…</p></div></div>}
     <a href="#book" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:bg-cyan-300 focus:px-4 focus:py-2 focus:text-black">Skip to booking</a>
     <header className="glass fixed inset-x-3 top-3 z-50 flex items-center justify-between rounded-2xl px-4 py-3 md:inset-x-8">
       <a href="#hero" className="font-display text-lg font-bold">{site.brand}</a>
