@@ -1,14 +1,10 @@
 "use client";
-import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { site, trustPoints, packages, stops, hotspots, faqs } from "@/content/site";
 
-const HeroScene = dynamic(()=>import("@/components/three/HeroScene"),{ssr:false});
-const RideScene = dynamic(()=>import("@/components/three/RideScene"),{ssr:false});
-const MonumentScene = dynamic(()=>import("@/components/three/MonumentScene"),{ssr:false});
 
 function useInstall(){
   const [prompt,setPrompt]=useState<any>(null); const [ios,setIos]=useState(false);
@@ -34,7 +30,7 @@ export default function ClientApp(){
     window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg)}`,"_blank"); };
   const input="w-full rounded-xl bg-white/5 border border-white/15 px-4 py-3 text-white placeholder:text-slate-400";
   return (<main>
-    {!loaded && <div className="fixed inset-0 z-[100] grid place-items-center bg-[#05060A]"><div className="text-center"><p className="font-display text-2xl font-bold">Golden Hour Drive</p><div className="mt-4 h-1.5 w-56 overflow-hidden rounded-full bg-white/10"><div className="h-full w-2/3 animate-pulse rounded-full bg-cyan-300"/></div><p className="mt-3 text-sm text-slate-400">Loading 3D scene…</p></div></div>}
+    {!loaded && <div className="fixed inset-0 z-[100] grid place-items-center bg-[#05060A]"><div className="text-center"><p className="font-display text-2xl font-bold">Golden Hour Drive</p><div className="mt-4 h-1.5 w-56 overflow-hidden rounded-full bg-white/10"><div className="h-full w-2/3 animate-pulse rounded-full bg-cyan-300"/></div><p className="mt-3 text-sm text-slate-400">Loading your golden-hour ride…</p></div></div>}
     <a href="#book" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:bg-cyan-300 focus:px-4 focus:py-2 focus:text-black">Skip to booking</a>
     <header className="glass fixed inset-x-3 top-3 z-50 flex items-center justify-between rounded-2xl px-4 py-3 md:inset-x-8">
       <a href="#hero" className="font-display text-lg font-bold">{site.brand}</a>
@@ -43,14 +39,14 @@ export default function ClientApp(){
     </header>
 
     <section id="hero" className="relative flex min-h-[108vh] items-center overflow-hidden">
-      <div className="absolute inset-0">{reduced ? <div className="h-full w-full bg-[radial-gradient(circle_at_50%_75%,rgba(255,181,71,.35),transparent_45%),radial-gradient(circle_at_50%_30%,rgba(56,232,255,.18),transparent_50%),#05060A]"/> : <HeroScene/>}</div>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#05060A]"/>
+      <div className="absolute inset-0">{reduced ? <img src="/videos/poster-hero.jpg" alt="" className="h-full w-full object-cover"/> : <video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="auto" poster="/videos/poster-hero.jpg" aria-hidden><source src="/videos/hero-taj.mp4" type="video/mp4"/></video>}</div>
+      <div className="pointer-events-none absolute inset-0" style={{background:"linear-gradient(90deg,rgba(5,6,10,.68),rgba(5,6,10,.22) 55%,transparent),linear-gradient(180deg,rgba(5,6,10,.25),transparent 35%,transparent 60%,#05060A)"}}/>
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pt-28">
         <p className="mb-4 inline-block rounded-full border border-cyan-300/40 bg-cyan-300/10 px-4 py-1 text-xs tracking-[0.22em] text-cyan-200">AGRA • PRIVATE CAR TOURS • LOCAL HOST</p>
         <h1 className="font-display max-w-3xl text-5xl font-bold leading-[0.98] md:text-7xl">Feel the Journey <span className="text-grad">Before You Take It.</span></h1>
         <p className="mt-5 max-w-xl text-lg text-slate-300">{site.sub}</p>
         <div className="pointer-events-auto mt-8 flex flex-wrap gap-3"><a href="#book" className="btn-amber rounded-full px-7 py-3.5">Book Your Tour</a><a href="#ride" className="glass glow-cyan rounded-full px-7 py-3.5 font-semibold">▶ Watch the Ride</a></div>
-        <p className="mt-6 text-sm text-slate-400">Scroll karein — camera monument ki taraf badhegi ↓</p>
+        <p className="mt-6 text-sm text-slate-400">Upar golden-hour ki 3D-view film chal rahi hai — tours ke liye scroll karein ↓</p>
       </div>
     </section>
 
@@ -61,15 +57,15 @@ export default function ClientApp(){
 
     <section id="ride" className="mx-auto max-w-6xl px-5 py-16"><div className="flex flex-wrap items-end justify-between gap-4"><div><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Ride View — Car ya Bike?</h2><p className="mt-3 max-w-xl text-slate-400">Booking se pehle ride feel karein. Bike bookings <b className="text-amber-300">Coming Soon</b> hain — permits & insurance pending. Car bookable hai.</p></div>
       <div className="glass flex rounded-full p-1">{(["car","bike"] as const).map(m=>(<button key={m} onClick={()=>setMode(m)} className={`rounded-full px-6 py-2.5 font-semibold capitalize ${mode===m?"bg-cyan-300 text-black":"text-slate-300"}`}>{m} View</button>))}</div></div>
-      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<div className="grid h-full place-items-center bg-white/5">Reduced motion: static poster mode</div>:<RideScene mode={mode} active={stop} onAdd={addStop}/>}
+      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<img src="/videos/poster-hero.jpg" alt="" className="h-full w-full object-cover"/>:<video className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster="/videos/poster-hero.jpg" aria-hidden><source src="/videos/hero-taj.mp4" type="video/mp4"/></video>}
         {mode==="car" && <div className="pointer-events-none absolute inset-x-8 bottom-0 h-24 rounded-t-[6rem] border-t-4 border-cyan-200/25 bg-black/35 backdrop-blur-[2px]"/>}
         {mode==="bike" && <div className="pointer-events-none absolute bottom-5 left-1/2 h-4 w-64 -translate-x-1/2 rounded-full bg-black/60 shadow-[0_0_0_6px_rgba(255,255,255,0.08)]"/>}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">{stops.map((s,i)=>(<button key={s.name} onClick={()=>setStop(i)} className={`rounded-full px-4 py-2 text-sm ${stop===i?"bg-amber-400 text-black font-bold":"glass"}`}>{i+1}. {s.name}</button>))}</div>
       <div className="sr-only">{stops.map(s=>(<p key={s.name}>{s.name}: {s.desc}</p>))}</div></section>
 
-    <section id="monument" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Monument Viewer — 3D me ghumao</h2><p className="mt-3 text-slate-400">Drag karke rotate, pinch/scroll se zoom. Ye procedural placeholder model hai — asal GLB model <code>public/models/</code> me aayega.</p>
-      <div className="mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<div className="grid h-full place-items-center bg-white/5">Reduced motion mode</div>:<MonumentScene onBook={()=>bookPkg("sunrise")}/>}</div>
+    <section id="monument" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Monument — 3D View Film</h2><p className="mt-3 text-slate-400">Film me monument sunrise ki roshni me har angle se ghoomta dikhega — asal me yahi nazara aapko wahan milega.</p>
+      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<img src="/videos/poster-taj.jpg" alt="" className="h-full w-full object-cover"/>:<video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster="/videos/poster-taj.jpg" aria-hidden><source src="/videos/taj-orbit.mp4" type="video/mp4"/></video>}</div>
       <div className="mt-5 grid gap-4 md:grid-cols-3">{hotspots.map(h=>(<div key={h.title} data-reveal className="glass rounded-2xl p-5"><h3 className="font-display font-bold">{h.title}</h3><p className="mt-2 text-sm text-slate-300">{h.desc}</p><p className="mt-2 text-sm text-amber-300">{h.tip}</p></div>))}</div>
       <button onClick={()=>bookPkg("sunrise")} className="btn-amber mt-6 rounded-full px-7 py-3.5">Book a Tour Here</button></section>
 
@@ -91,6 +87,6 @@ export default function ClientApp(){
       </form></section>
 
     <section id="faq" className="mx-auto max-w-4xl px-5 py-12"><h2 className="font-display text-3xl font-bold">FAQ</h2><div className="mt-6 space-y-3">{faqs.map(f=>(<details key={f.q} className="glass rounded-2xl p-5"><summary className="cursor-pointer font-semibold">{f.q}</summary><p className="mt-2 text-slate-300">{f.a}</p></details>))}</div></section>
-    <footer className="border-t border-white/10 px-5 py-10 text-center text-sm text-slate-400"><p className="font-display text-lg font-bold text-white">{site.brand}</p><p className="mt-2">Agra private tour with driver • Agra sunrise tour • Golden Triangle tour by car • Agra to Jaipur taxi with sightseeing</p><p className="mt-3">Credits: Procedural 3D models built in-code (no external model licenses used). Contact: {site.email} • {site.whatsappDisplay}</p><p className="mt-2">© 2026 [Placeholder Brand]. All placeholders in TODO.md</p></footer>
+    <footer className="border-t border-white/10 px-5 py-10 text-center text-sm text-slate-400"><p className="font-display text-lg font-bold text-white">{site.brand}</p><p className="mt-2">Agra private tour with driver • Agra sunrise tour • Golden Triangle tour by car • Agra to Jaipur taxi with sightseeing</p><p className="mt-3">Credits: Cinematic 3D-view films made for this website (no stock footage used). Contact: {site.email} • {site.whatsappDisplay}</p><p className="mt-2">© 2026 [Placeholder Brand]. All placeholders in TODO.md</p></footer>
   </main>);
 }
