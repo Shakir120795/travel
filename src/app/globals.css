@@ -5,7 +5,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflo
 .font-display{font-family:var(--font-display)}
 .glass{background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .glow-cyan{box-shadow:0 0 32px rgba(56,232,255,.28)}
-.text-grad{background:linear-gradient(92deg,#fff 10%,var(--cyan) 48%,var(--amber) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.text-grad{background:linear-gradient(92deg,#182230 10%,#0891B2 48%,#D97706 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .btn-primary{background:linear-gradient(92deg,var(--cyan),var(--violet));color:#04121a;font-weight:700}
 .btn-amber{background:linear-gradient(92deg,var(--amber),#ff8a3d);color:#1a0e02;font-weight:700}
 :focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
