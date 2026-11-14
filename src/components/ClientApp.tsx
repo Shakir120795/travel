@@ -3,21 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { site, trustPoints, packages, stops, hotspots, faqs } from "@/content/site";
+import { site, trustPoints, packages, stops, hotspots, faqs, destinations } from "@/content/site";
 
 
-function useInstall(){
-  const [prompt,setPrompt]=useState<any>(null); const [ios,setIos]=useState(false);
-  useEffect(()=>{ const h=(e:any)=>{e.preventDefault();setPrompt(e)}; window.addEventListener("beforeinstallprompt",h);
-    if(/iphone|ipad/i.test(navigator.userAgent) && !(window.navigator as any).standalone) setIos(true);
-    if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(()=>{});
-    return ()=>window.removeEventListener("beforeinstallprompt",h); },[]);
-  return {install: async()=>{ if(prompt){prompt.prompt();} else if(ios){alert("iPhone: Share → Add to Home Screen se install karein.");} else {alert("Browser menu se 'Install App / Add to Home Screen' chunein.");} }};
-}
 export default function ClientApp(){
   const [pkg,setPkg]=useState(packages[0].id); const [mode,setMode]=useState<"car"|"bike">("car"); const [stop,setStop]=useState(0); const [trip,setTrip]=useState<string[]>([]); const [loaded,setLoaded]=useState(false); const [reduced,setReduced]=useState(false);
-  const {install}=useInstall(); const formRef=useRef<HTMLFormElement>(null);
-  useEffect(()=>{ setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches); const t=setTimeout(()=>setLoaded(true),900);
+  const formRef=useRef<HTMLFormElement>(null);
+  useEffect(()=>{ if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(()=>{}); setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches); const t=setTimeout(()=>setLoaded(true),900);
     gsap.registerPlugin(ScrollTrigger); const lenis=new Lenis({lerp:0.09}); lenis.on("scroll",ScrollTrigger.update);
     const raf=(time:number)=>{lenis.raf(time*1000)}; gsap.ticker.add(raf); gsap.ticker.lagSmoothing(0);
     gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(el=>{ gsap.fromTo(el,{y:36,opacity:0},{y:0,opacity:1,duration:0.9,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 86%"}}); });
@@ -34,8 +26,8 @@ export default function ClientApp(){
     <a href="#book" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:bg-cyan-300 focus:px-4 focus:py-2 focus:text-black">Skip to booking</a>
     <header className="glass fixed inset-x-3 top-3 z-50 flex items-center justify-between rounded-2xl px-4 py-3 md:inset-x-8">
       <a href="#hero" className="font-display text-lg font-bold">{site.brand}</a>
-      <nav className="hidden gap-6 text-sm text-slate-300 md:flex"><a href="#tours">Tours</a><a href="#ride">Ride View</a><a href="#monument">Monument</a><a href="#faq">FAQ</a></nav>
-      <div className="flex gap-2"><button onClick={install} className="glass rounded-full px-4 py-2 text-sm">Install App</button><a href="#book" className="btn-primary rounded-full px-4 py-2 text-sm">Book Now</a></div>
+      <nav className="hidden gap-6 text-sm text-slate-300 md:flex"><a href="#tours">Tours</a><a href="#places">Places</a><a href="#ride">Ride View</a><a href="#monument">Monument</a><a href="#faq">FAQ</a></nav>
+      <div className="flex gap-2"><a href="#book" className="btn-primary rounded-full px-4 py-2 text-sm">Book Now</a></div>
     </header>
 
     <section id="hero" className="relative flex min-h-[108vh] items-center overflow-hidden">
@@ -52,12 +44,15 @@ export default function ClientApp(){
 
     <section className="mx-auto grid max-w-6xl gap-3 px-5 py-8 sm:grid-cols-2 lg:grid-cols-4">{trustPoints.map(t=>(<div key={t} data-reveal className="glass rounded-2xl px-5 py-4 text-center font-medium">✓ {t}</div>))}</section>
 
-    <section id="tours" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Experiences & Packages</h2><p className="mt-3 text-slate-400">Price: <b className="text-amber-300">[Placeholder — founder prices yahan aayenge]</b></p>
-      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{packages.map(p=>(<article key={p.id} data-reveal className="glass group rounded-3xl p-6 transition hover:-translate-y-1 hover:border-cyan-300/50"><p className="text-xs tracking-widest text-cyan-300">{p.duration.toUpperCase()}</p><h3 className="font-display mt-2 text-2xl font-bold">{p.title}</h3><p className="mt-3 text-sm leading-6 text-slate-300">{p.route}</p><ul className="mt-4 space-y-1 text-sm text-slate-400">{p.includes.map(i=>(<li key={i}>• {i}</li>))}</ul><button onClick={()=>bookPkg(p.id)} className="btn-primary mt-6 w-full rounded-full py-3">Book This Tour</button></article>))}</div></section>
+    <section id="tours" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Experiences & Packages</h2><p className="mt-3 text-slate-400">Har tour ki <b className="text-amber-300">starting rate per car</b> di gayi hai — final rate date, car type aur travelers par WhatsApp par confirm hogi.</p>
+      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{packages.map(p=>(<article key={p.id} data-reveal className="glass group overflow-hidden rounded-3xl transition hover:-translate-y-1 hover:border-cyan-300/50"><img src={p.image} alt={p.title} className="h-44 w-full object-cover" loading="lazy"/><div className="p-6"><p className="text-xs tracking-widest text-cyan-300">{p.duration.toUpperCase()}</p><h3 className="font-display mt-2 text-2xl font-bold">{p.title}</h3><p className="mt-3 text-sm leading-6 text-slate-300">{p.route}</p><ul className="mt-4 space-y-1 text-sm text-slate-400">{p.includes.map(i=>(<li key={i}>• {i}</li>))}</ul><p className="mt-5 flex items-baseline gap-2"><span className="text-xs uppercase tracking-widest text-slate-400">Starting from</span><span className="font-display text-3xl font-bold text-amber-300">{p.price}</span><span className="text-xs text-slate-400">per car</span></p><button onClick={()=>bookPkg(p.id)} className="btn-primary mt-4 w-full rounded-full py-3">Book This Tour</button></div></article>))}</div></section>
 
-    <section id="ride" className="mx-auto max-w-6xl px-5 py-16"><div className="flex flex-wrap items-end justify-between gap-4"><div><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Ride View — Car ya Bike?</h2><p className="mt-3 max-w-xl text-slate-400">Booking se pehle ride feel karein. Bike bookings <b className="text-amber-300">Coming Soon</b> hain — permits & insurance pending. Car bookable hai.</p></div>
+<section id="places" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Places — Har Jagah, Alag Film</h2><p className="mt-3 max-w-2xl text-slate-400">Sirf Taj hi nahi — Agra Fort, Jaipur ke mahal aur Mathura–Vrindavan ke mandir, har jagah ki apni 3D-view film.</p>
+      <div className="mt-8 grid gap-5 md:grid-cols-2">{destinations.map(d=>(<article key={d.name} data-reveal className="glass group overflow-hidden rounded-3xl"><div className="relative aspect-video overflow-hidden"><video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster={d.poster} aria-hidden><source src={d.video} type="video/mp4"/></video><span className="absolute left-4 top-4 rounded-full bg-black/55 px-3 py-1 text-xs font-bold tracking-wide text-cyan-200">3D VIEW FILM</span></div><div className="p-6"><h3 className="font-display text-2xl font-bold">{d.name}</h3><p className="mt-2 text-sm leading-6 text-slate-300">{d.desc}</p><button onClick={()=>bookPkg(d.pkg)} className="btn-primary mt-5 rounded-full px-6 py-2.5 text-sm">Book This Place</button></div></article>))}</div></section>
+
+        <section id="ride" className="mx-auto max-w-6xl px-5 py-16"><div className="flex flex-wrap items-end justify-between gap-4"><div><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Ride View — Car ya Bike?</h2><p className="mt-3 max-w-xl text-slate-400">Booking se pehle ride feel karein. Bike bookings <b className="text-amber-300">Coming Soon</b> hain — permits & insurance pending. Car bookable hai.</p></div>
       <div className="glass flex rounded-full p-1">{(["car","bike"] as const).map(m=>(<button key={m} onClick={()=>setMode(m)} className={`rounded-full px-6 py-2.5 font-semibold capitalize ${mode===m?"bg-cyan-300 text-black":"text-slate-300"}`}>{m} View</button>))}</div></div>
-      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<img src="/videos/poster-hero.jpg" alt="" className="h-full w-full object-cover"/>:<video className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster="/videos/poster-hero.jpg" aria-hidden><source src="/videos/hero-taj.mp4" type="video/mp4"/></video>}
+      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<img src="/videos/poster-drive.jpg" alt="" className="h-full w-full object-cover"/>:<video className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster="/videos/poster-drive.jpg" aria-hidden><source src="/videos/drive.mp4" type="video/mp4"/></video>}
         {mode==="car" && <div className="pointer-events-none absolute inset-x-8 bottom-0 h-24 rounded-t-[6rem] border-t-4 border-cyan-200/25 bg-black/35 backdrop-blur-[2px]"/>}
         {mode==="bike" && <div className="pointer-events-none absolute bottom-5 left-1/2 h-4 w-64 -translate-x-1/2 rounded-full bg-black/60 shadow-[0_0_0_6px_rgba(255,255,255,0.08)]"/>}
       </div>
@@ -87,6 +82,6 @@ export default function ClientApp(){
       </form></section>
 
     <section id="faq" className="mx-auto max-w-4xl px-5 py-12"><h2 className="font-display text-3xl font-bold">FAQ</h2><div className="mt-6 space-y-3">{faqs.map(f=>(<details key={f.q} className="glass rounded-2xl p-5"><summary className="cursor-pointer font-semibold">{f.q}</summary><p className="mt-2 text-slate-300">{f.a}</p></details>))}</div></section>
-    <footer className="border-t border-white/10 px-5 py-10 text-center text-sm text-slate-400"><p className="font-display text-lg font-bold text-white">{site.brand}</p><p className="mt-2">Agra private tour with driver • Agra sunrise tour • Golden Triangle tour by car • Agra to Jaipur taxi with sightseeing</p><p className="mt-3">Credits: Cinematic 3D-view films made for this website (no stock footage used). Contact: {site.email} • {site.whatsappDisplay}</p><p className="mt-2">© 2026 [Placeholder Brand]. All placeholders in TODO.md</p></footer>
+    <footer className="border-t border-white/10 px-5 py-10 text-center text-sm text-slate-400"><p className="font-display text-lg font-bold text-white">{site.brand}</p><p className="mt-2">Agra private tour with driver • Agra sunrise tour • Golden Triangle tour by car • Agra to Jaipur taxi with sightseeing</p><p className="mt-3">Credits: Cinematic 3D-view films made for this website (no stock footage used). Contact: {site.email} • {site.whatsappDisplay}</p><p className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-1"><a className="underline decoration-slate-500 underline-offset-4 hover:text-white" href="/privacy">Privacy Policy</a><a className="underline decoration-slate-500 underline-offset-4 hover:text-white" href="/terms">Terms & Conditions</a><a className="underline decoration-slate-500 underline-offset-4 hover:text-white" href="/safety">Safety & Security</a></p><p className="mt-2">© 2026 xyz-travel.com. All placeholders in TODO.md</p></footer>
   </main>);
 }

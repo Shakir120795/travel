@@ -1,5 +1,5 @@
 export const site = {
-  brand: "[PLACEHOLDER: Brand Name]",
+  brand: "xyz-travel.com",
   tagline: "Feel the Journey Before You Take It.",
   sub: "Private Agra tours with a local driver-guide host — sunrise at the Taj, forts, gardens and old-city streets, in a comfortable licensed car.",
   whatsapp: "910000000000", // TODO: founder real WhatsApp number daalein
@@ -7,13 +7,13 @@ export const site = {
   whatsappDisplay: "+91 XXXXX XXXXX [Placeholder]",
 };
 export const trustPoints = ["Commercial licensed car","English-speaking local host","Licensed monument guide on request","Hotel / station pickup in Agra"];
-export type Pkg = {id:string; title:string; duration:string; route:string; includes:string[]};
+export type Pkg = {id:string; title:string; duration:string; route:string; includes:string[]; price:string; image:string};
 export const packages: Pkg[] = [
-  {id:"sunrise", title:"Agra Sunrise Tour", duration:"4–5 hours", route:"Pickup → Taj Mahal at sunrise → Breakfast stop → Drop", includes:["Car + driver-guide","Pickup & drop","Water bottles"]},
-  {id:"fullday", title:"Agra Full-Day City Tour", duration:"8–9 hours", route:"Taj Mahal → Agra Fort → Mehtab Bagh → Old Agra market", includes:["Car + driver-guide","Licensed guide add-on available","Flexible stops"]},
-  {id:"jaipur-transfer", title:"Agra to Jaipur Transfer with Sightseeing", duration:"1 day", route:"Agra → Fatehpur Sikri → Abhaneri Stepwell → Jaipur", includes:["One-way private car","Sightseeing stops","Luggage space"]},
-  {id:"golden-triangle", title:"Delhi–Agra–Jaipur Golden Triangle", duration:"3–4 days", route:"Delhi → Agra → Jaipur → Delhi", includes:["Car for full trip","Driver-guide host","Hotel pickup daily"]},
-  {id:"manali", title:"Manali Trip", duration:"4–6 days", route:"Delhi / Chandigarh → Manali → Solang Valley", includes:["Mountain-experienced driver","Private car","Flexible itinerary"]},
+  {id:"sunrise", title:"Agra Sunrise Tour", duration:"4–5 hours", route:"Pickup → Taj Mahal at sunrise → Breakfast stop → Drop", includes:["Car + driver-guide","Pickup & drop","Water bottles"], price:"₹1,999", image:"/videos/poster-hero.jpg"},
+  {id:"fullday", title:"Agra Full-Day City Tour", duration:"8–9 hours", route:"Taj Mahal → Agra Fort → Mehtab Bagh → Old Agra market", includes:["Car + driver-guide","Licensed guide add-on available","Flexible stops"], price:"₹2,999", image:"/videos/poster-fort.jpg"},
+  {id:"jaipur-transfer", title:"Agra to Jaipur Transfer with Sightseeing", duration:"1 day", route:"Agra → Fatehpur Sikri → Abhaneri Stepwell → Jaipur", includes:["One-way private car","Sightseeing stops","Luggage space"], price:"₹6,499", image:"/videos/poster-jaipur.jpg"},
+  {id:"golden-triangle", title:"Delhi–Agra–Jaipur Golden Triangle", duration:"3–4 days", route:"Delhi → Agra → Jaipur → Delhi", includes:["Car for full trip","Driver-guide host","Hotel pickup daily"], price:"₹17,999", image:"/images/delhi.webp"},
+  {id:"manali", title:"Manali Trip", duration:"4–6 days", route:"Delhi / Chandigarh → Manali → Solang Valley", includes:["Mountain-experienced driver","Private car","Flexible itinerary"], price:"₹14,999", image:"/images/manali.webp"},
 ];
 export const stops = [
   {name:"The Main Monument", desc:"Sunrise view, the most peaceful hour to visit.", pos:0},
@@ -32,4 +32,11 @@ export const faqs = [
   {q:"Is a guide included inside monuments?", a:"Inside protected monuments a licensed guide is required — a licensed guide can be added to any tour on request."},
   {q:"Can I book the bike?", a:"Bike rides are coming soon for real bookings, until permits and insurance are in place. Cars are bookable now."},
   {q:"Where do you pick up from?", a:"Hotels, railway station or any point in Agra. Longer trips start from Delhi / Jaipur as planned on WhatsApp."},
+];
+
+export const destinations = [
+  {name:"Taj Mahal, Agra", desc:"Sunrise par safed sangmarmar ka jaadoo — duniya ka sabse khoobsurat nazara.", video:"/videos/taj-orbit.mp4", poster:"/videos/poster-taj.jpg", pkg:"sunrise"},
+  {name:"Agra Fort", desc:"Laal balua patthar ki shahi shahar — jahan se Taj bhi dikhta hai.", video:"/videos/fort.mp4", poster:"/videos/poster-fort.jpg", pkg:"fullday"},
+  {name:"Jaipur — Pink City", desc:"Hawa Mahal ki galiyan aur pahadi par Amber Fort ka shahi nazara.", video:"/videos/jaipur.mp4", poster:"/videos/poster-jaipur.jpg", pkg:"jaipur-transfer"},
+  {name:"Mathura–Vrindavan", desc:"Mandiron ki nagri — Prem Mandir, Banke Bihari aur Yamuna ke ghat.", video:"/videos/vrindavan.mp4", poster:"/videos/poster-vrindavan.jpg", pkg:"fullday"},
 ];
