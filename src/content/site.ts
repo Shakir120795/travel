@@ -2,9 +2,9 @@ export const site = {
   brand: "xyz-travel.com",
   tagline: "Feel the Journey Before You Take It.",
   sub: "Private Agra tours with a local driver-guide — the Taj at sunrise, forts, gardens and old-city streets.",
-  whatsapp: "910000000000", // TODO: founder real WhatsApp number daalein
+  whatsapp: "918126812317",
   email: "hello@example.com", // PLACEHOLDER
-  whatsappDisplay: "+91 XXXXX XXXXX [Placeholder]",
+  whatsappDisplay: "+91 81268 12317",
 };
 export const trustPoints = ["Commercial licensed car","English-speaking local host","Licensed monument guide on request","Hotel / station pickup in Agra"];
 export type Pkg = {id:string; title:string; duration:string; route:string; includes:string[]; price:string; image:string};

@@ -5,6 +5,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { site, trustPoints, packages, stops, hotspots, faqs, destinations } from "@/content/site";
 
+function VideoBg({src, poster, className, eager}:{src:string; poster?:string; className?:string; eager?:boolean}){
+  const ref=useRef<HTMLVideoElement>(null);
+  useEffect(()=>{ const v=ref.current; if(!v) return; v.muted=true; const tryPlay=()=>{ v.play().catch(()=>{}); }; tryPlay(); v.addEventListener("canplay", tryPlay); return ()=>v.removeEventListener("canplay", tryPlay); },[src]);
+  return (<video ref={ref} key={src} className={className} autoPlay muted loop playsInline preload={eager?"auto":"metadata"} poster={poster} aria-hidden><source src={src} type="video/mp4"/></video>);
+}
 export default function ClientApp(){
   const [pkg,setPkg]=useState(packages[0].id); const [stop,setStop]=useState(0); const [trip,setTrip]=useState<string[]>([]); const [loaded,setLoaded]=useState(false); const [reduced,setReduced]=useState(false);
   const formRef=useRef<HTMLFormElement>(null);
@@ -19,7 +24,7 @@ export default function ClientApp(){
     const msg=`Hello! I want to book: ${sel?.title}\nName: ${data.name}\nCountry: ${data.country}\nWhatsApp: ${data.phone}\nDate: ${data.date}\nTravelers: ${data.travelers}\nPickup: ${data.pickup}\nStops: ${trip.join(", ")||"-"}\nMessage: ${data.message||"-"}`;
     fetch("/api/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...data,packageId:pkg,stops:trip})}).catch(()=>{});
     window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(msg)}`,"_blank"); };
-  const input="w-full rounded-xl bg-white/5 border border-white/15 px-4 py-3 text-white placeholder:text-slate-400";
+  const input="w-full rounded-xl bg-slate-50 border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-500";
   const active=stops[stop];
   return (<main>
     {!loaded && <div className="fixed inset-0 z-[100] grid place-items-center bg-[#05060A]"><div className="text-center"><p className="font-display text-2xl font-bold">Golden Hour Drive</p><div className="mt-4 h-1.5 w-56 overflow-hidden rounded-full bg-white/10"><div className="h-full w-2/3 animate-pulse rounded-full bg-cyan-300"/></div><p className="mt-3 text-sm text-slate-400">Loading your golden-hour ride…</p></div></div>}
@@ -31,7 +36,7 @@ export default function ClientApp(){
     </header>
 
     <section id="hero" className="relative flex min-h-[100vh] items-center overflow-hidden">
-      <div className="absolute inset-0">{reduced ? <img src="/videos/poster-hero.jpg" alt="" className="h-full w-full object-cover"/> : <video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="auto" poster="/videos/poster-hero.jpg" aria-hidden><source src="/videos/hero-taj.mp4" type="video/mp4"/></video>}</div>
+      <div className="absolute inset-0">{reduced ? <img src="/videos/poster-hero.jpg" alt="" className="h-full w-full object-cover"/> : <VideoBg src="/videos/hero-taj.mp4" poster="/videos/poster-hero.jpg" className="h-full w-full object-cover" eager/>}</div>
       <div className="pointer-events-none absolute inset-0" style={{background:"linear-gradient(90deg,rgba(5,6,10,.55),rgba(5,6,10,.12) 55%,transparent),linear-gradient(180deg,rgba(5,6,10,.2),transparent 35%,transparent 65%,#05060A)"}}/>
       <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pt-28">
         <p className="mb-3 inline-block rounded-full border border-cyan-300/40 bg-cyan-300/10 px-4 py-1 text-xs tracking-[0.22em] text-cyan-200">AGRA • PRIVATE CAR TOURS</p>
@@ -47,11 +52,11 @@ export default function ClientApp(){
       <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{packages.map(p=>(<article key={p.id} data-reveal className="glass group overflow-hidden rounded-3xl transition hover:-translate-y-1 hover:border-cyan-300/50"><img src={p.image} alt={p.title} className="h-44 w-full object-cover" loading="lazy"/><div className="p-6"><p className="text-xs tracking-widest text-cyan-300">{p.duration.toUpperCase()}</p><h3 className="font-display mt-2 text-2xl font-bold">{p.title}</h3><p className="mt-3 text-sm leading-6 text-slate-300">{p.route}</p><ul className="mt-4 space-y-1 text-sm text-slate-400">{p.includes.map(i=>(<li key={i}>• {i}</li>))}</ul><p className="mt-5 flex items-baseline gap-2"><span className="text-xs uppercase tracking-widest text-slate-400">Starting from</span><span className="font-display text-3xl font-bold text-amber-300">{p.price}</span><span className="text-xs text-slate-400">per car</span></p><button onClick={()=>bookPkg(p.id)} className="btn-primary mt-4 w-full rounded-full py-3">Book This Tour</button></div></article>))}</div></section>
 
     <section id="places" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Places — A Film for Every Destination</h2><p className="mt-3 max-w-2xl text-slate-400">Not just the Taj — Agra Fort, the palaces of Jaipur and the temples of Mathura–Vrindavan, each with its own film.</p>
-      <div className="mt-8 grid gap-5 md:grid-cols-2">{destinations.map(d=>(<article key={d.name} data-reveal className="glass group overflow-hidden rounded-3xl"><div className="relative aspect-video overflow-hidden"><video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster={d.poster} aria-hidden><source src={d.video} type="video/mp4"/></video><span className="absolute left-4 top-4 rounded-full bg-black/55 px-3 py-1 text-xs font-bold tracking-wide text-cyan-200">3D VIEW FILM</span></div><div className="p-6"><h3 className="font-display text-2xl font-bold">{d.name}</h3><p className="mt-2 text-sm leading-6 text-slate-300">{d.desc}</p><button onClick={()=>bookPkg(d.pkg)} className="btn-primary mt-5 rounded-full px-6 py-2.5 text-sm">Book This Place</button></div></article>))}</div></section>
+      <div className="mt-8 grid gap-5 md:grid-cols-2">{destinations.map(d=>(<article key={d.name} data-reveal className="glass group overflow-hidden rounded-3xl"><div className="relative aspect-video overflow-hidden"><VideoBg src={d.video} poster={d.poster} className="h-full w-full object-cover"/><span className="absolute left-4 top-4 rounded-full bg-black/55 px-3 py-1 text-xs font-bold tracking-wide text-cyan-200">3D VIEW FILM</span></div><div className="p-6"><h3 className="font-display text-2xl font-bold">{d.name}</h3><p className="mt-2 text-sm leading-6 text-slate-300">{d.desc}</p><button onClick={()=>bookPkg(d.pkg)} className="btn-primary mt-5 rounded-full px-6 py-2.5 text-sm">Book This Place</button></div></article>))}</div></section>
 
     <section id="stops" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Tour Stops — Tap a Place</h2><p className="mt-3 max-w-xl text-slate-400">Tap any stop to see it. Add the ones you love to your trip, and they will be included in your booking.</p>
       <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">
-        {active.media.type==="video" ? <video key={active.name} className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster={active.media.poster} aria-hidden><source src={active.media.src} type="video/mp4"/></video> : <img key={active.name} src={active.media.src} alt={active.name} className="absolute inset-0 h-full w-full object-cover"/>}
+        {active.media.type==="video" ? <VideoBg src={active.media.src} poster={active.media.poster} className="absolute inset-0 h-full w-full object-cover"/> : <img key={active.name} src={active.media.src} alt={active.name} className="absolute inset-0 h-full w-full object-cover"/>}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-6 pt-16">
           <h3 className="font-display text-2xl font-bold md:text-3xl">{active.name}</h3>
           <p className="mt-1 max-w-lg text-sm text-slate-200">{active.desc}</p>
@@ -63,7 +68,7 @@ export default function ClientApp(){
     </section>
 
     <section id="monument" className="mx-auto max-w-6xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">The Taj Mahal — Up Close</h2><p className="mt-3 text-slate-400">The monument in sunrise light, from every side — and on the tour, a licensed guide brings its stories to life.</p>
-      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<img src="/videos/poster-taj.jpg" alt="" className="h-full w-full object-cover"/>:<video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster="/videos/poster-taj.jpg" aria-hidden><source src="/videos/taj-orbit.mp4" type="video/mp4"/></video>}</div>
+      <div className="relative mt-7 h-[480px] overflow-hidden rounded-[2rem] border border-white/12">{reduced?<img src="/videos/poster-taj.jpg" alt="" className="h-full w-full object-cover"/>:<VideoBg src="/videos/taj-orbit.mp4" poster="/videos/poster-taj.jpg" className="h-full w-full object-cover"/>}</div>
       <div className="mt-5 grid gap-4 md:grid-cols-3">{hotspots.map(h=>(<div key={h.title} data-reveal className="glass rounded-2xl p-5"><h3 className="font-display font-bold">{h.title}</h3><p className="mt-2 text-sm text-slate-300">{h.desc}</p><p className="mt-2 text-sm text-amber-300">{h.tip}</p></div>))}</div>
       <button onClick={()=>bookPkg("sunrise")} className="btn-amber mt-6 rounded-full px-7 py-3.5">Book a Tour Here</button></section>
 
@@ -72,10 +77,10 @@ export default function ClientApp(){
     <section className="mx-auto max-w-6xl px-5 py-8"><h2 data-reveal className="font-display text-3xl font-bold">Guest Reviews</h2><div className="mt-6 grid gap-5 md:grid-cols-3">{["Sunrise Tour","Full-Day Tour","Golden Triangle"].map(i=>(<div key={i} className="glass rounded-3xl p-6 text-slate-400">Reviews from our guests on the {i} will be published here soon.</div>))}</div></section>
 
     <section id="book" className="mx-auto max-w-3xl px-5 py-16"><h2 data-reveal className="font-display text-4xl font-bold md:text-5xl">Book Your Tour</h2><p className="mt-3 text-slate-400">Submit the form and WhatsApp opens with your booking pre-filled. Payment is arranged in the same chat. WhatsApp: {site.whatsappDisplay}</p>
-      <form ref={formRef} onSubmit={submit} className="glass mt-7 grid gap-4 rounded-[2rem] p-6 md:grid-cols-2">
+      <form ref={formRef} onSubmit={submit} className="mt-7 grid gap-4 rounded-[2rem] bg-white p-6 shadow-2xl md:grid-cols-2">
         <input name="name" required placeholder="Your name *" className={input}/><input name="country" placeholder="Country" className={input}/>
         <input name="phone" required placeholder="Phone / WhatsApp *" className={input}/><input name="email" type="email" placeholder="Email (optional)" className={input}/>
-        <select value={pkg} onChange={e=>setPkg(e.target.value)} className={`${input} md:col-span-2 [&>option]:bg-slate-900`}>{packages.map(p=>(<option key={p.id} value={p.id}>{p.title} — {p.duration} — from {p.price}</option>))}</select>
+        <select value={pkg} onChange={e=>setPkg(e.target.value)} className={`${input} md:col-span-2 [&>option]:bg-white`}>{packages.map(p=>(<option key={p.id} value={p.id}>{p.title} — {p.duration}</option>))}</select>
         <input name="date" type="date" required className={input}/><input name="travelers" type="number" min={1} defaultValue={2} className={input}/>
         <input name="pickup" placeholder="Pickup place (hotel / station)" className={`${input} md:col-span-2`}/>
         <textarea name="message" placeholder={trip.length?`My trip stops: ${trip.join(", ")}`:"Message"} className={`${input} md:col-span-2`} rows={3}/>
