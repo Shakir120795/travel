@@ -1,0 +1,12 @@
+# TODO — Founder placeholders (spec section 4a / 15)
+- [ ] Brand name + domain (src/content/site.ts -> site.brand)
+- [ ] Real WhatsApp number (site.whatsapp) — abhi 910000000000 placeholder hai
+- [ ] Email, prices har package ke liye, vehicle details, languages
+- [ ] Real photos: founder + car (trust ke liye sabse important)
+- [ ] Real Google reviews (abhi placeholder cards)
+- [ ] Real GLB monument model -> public/models/ (license verify karke, <3MB, gltf-transform compress)
+- [ ] 360 panoramas -> public/panoramas/ (Ride View option B, baad me swap)
+- [ ] Resend key / Google Sheet webhook env: RESEND_API_KEY, LEAD_WEBHOOK_URL
+- [ ] Permits/insurance details, privacy policy page, cancellation terms asal text
+- [ ] PWA icons PNG 192/512 (abhi SVG icons hain)
+- Suggestions (spec bahar, abhi nahi banaye): online payment (Razorpay/Stripe phase 2), multi-language

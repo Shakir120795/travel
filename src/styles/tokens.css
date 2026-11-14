@@ -1,0 +1,6 @@
+:root{
+  --bg:#05060A; --surface:rgba(255,255,255,0.06); --border:rgba(255,255,255,0.12);
+  --cyan:#38E8FF; --amber:#FFB547; --violet:#7B5CFF;
+  --text:#F4F7FA; --muted:#9AA7B8;
+  --font-display:"Space Grotesk",system-ui,sans-serif; --font-body:"Inter",system-ui,sans-serif;
+}
